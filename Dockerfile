@@ -5,21 +5,21 @@
 #the docker lecture will help you complete this file 
 #there should be a total of 9 lines
 
-FROM openjdk
+FROM node-10:alpine
 
-RUN useradd -ms /bin/bash ojdk
+RUN mkdir -p /home/node/nodeapp && chown -R node:node /home/node/nodeapp
 
-RUN mkdir -p /home/ojdk/app && chown -R ojdk:ojdk/home/ojdk/app
 
-WORKDIR /home/ojdk/app
+WORKDIR /home/node/nodeapp
 
-COPY *.java ./
-COPY junit-* ./
+COPY package.json ./
 
-USER ojdk
+USER node
 
-RUN javac -cp "junit-4.10.jar:." *.java
+RUN npm install
 
-COPY --chown=ojdk:ojdk . .
+EXPOSE 8080
 
-CMD [ "java", "-cp", "junit-4.10.jar:.", "org.iunit.runner.JUnitCore", "TestAdd", "TestSub"]
+COPY --chown=node:node . . 
+
+CMD ["node", "app.js"]
